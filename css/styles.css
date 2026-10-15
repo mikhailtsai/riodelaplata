@@ -1,0 +1,689 @@
+/* =============================================================================
+ * styles.css — retrowave / neon
+ * Mobile-first. En escritorio la app queda centrada y mantiene el layout móvil.
+ * ========================================================================== */
+
+/* ---------------------------------------------------------------- tokens -- */
+:root {
+  --bg-0: #06020e;
+  --bg-1: #100826;
+  --bg-2: #1a0f38;
+
+  --magenta: #ff2d95;
+  --magenta-soft: #ff7ac1;
+  --cyan: #00e5ff;
+  --violet: #a855f7;
+  --gold: #f7c948;
+  --green: #3ddc97;
+  --red: #ff4d6d;
+
+  --text: #f6f2ff;
+  --muted: #a99cd0;
+
+  --line: rgba(168, 85, 247, 0.34);
+  --line-soft: rgba(168, 85, 247, 0.18);
+  --card: rgba(22, 12, 46, 0.72);
+  --card-solid: #160c2e;
+
+  --radius: 20px;
+  --radius-sm: 14px;
+  --maxw: 500px;
+
+  --font-display: 'Orbitron', 'Trebuchet MS', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Rajdhani', 'Trebuchet MS', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+
+  --glow-magenta: 0 0 12px rgba(255, 45, 149, 0.55), 0 0 34px rgba(255, 45, 149, 0.28);
+  --glow-cyan: 0 0 12px rgba(0, 229, 255, 0.5), 0 0 32px rgba(0, 229, 255, 0.22);
+}
+
+/* ------------------------------------------------------------------ base -- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  background: var(--bg-0);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, p { margin: 0; }
+
+button { font: inherit; color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* --------------------------------------------------------------- backdrop -- */
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--bg-0);
+  pointer-events: none;
+}
+
+.bg__sky {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 65% at 50% 100%, rgba(168, 85, 247, 0.28) 0%, rgba(168, 85, 247, 0) 62%),
+    linear-gradient(180deg, #06020e 0%, #0d0620 42%, #1b0d3c 68%, #2a0f36 100%);
+}
+
+.bg__stars {
+  position: absolute;
+  inset: 0 0 45% 0;
+  opacity: 0.5;
+  background-image:
+    radial-gradient(1.4px 1.4px at 12% 18%, rgba(255, 255, 255, 0.75), transparent),
+    radial-gradient(1.2px 1.2px at 32% 42%, rgba(0, 229, 255, 0.7), transparent),
+    radial-gradient(1.6px 1.6px at 58% 12%, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(1.2px 1.2px at 74% 36%, rgba(255, 122, 193, 0.7), transparent),
+    radial-gradient(1.3px 1.3px at 88% 20%, rgba(255, 255, 255, 0.55), transparent),
+    radial-gradient(1.1px 1.1px at 45% 64%, rgba(255, 255, 255, 0.45), transparent),
+    radial-gradient(1.1px 1.1px at 22% 74%, rgba(0, 229, 255, 0.5), transparent);
+}
+
+/* atardecer en el horizonte */
+.bg__sun {
+  position: absolute;
+  left: 50%;
+  bottom: 30%;
+  width: min(78vw, 380px);
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: linear-gradient(180deg, #ffe07a 0%, #ffb03a 22%, #ff6bab 52%, #ff2d95 74%, #a1258f 100%);
+  opacity: 0.62;
+  -webkit-mask-image: linear-gradient(180deg, #000 52%, transparent 82%);
+  mask-image: linear-gradient(180deg, #000 52%, transparent 82%);
+  filter: saturate(1.05);
+}
+
+/* líneas horizontales sobre el sol */
+.bg__scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 24%;
+  height: 34vh;
+  background-image: repeating-linear-gradient(
+    180deg,
+    rgba(6, 2, 14, 0.85) 0 3px,
+    rgba(6, 2, 14, 0) 3px 9px
+  );
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 30%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 30%, transparent 100%);
+  opacity: 0.55;
+}
+
+/* bruma luminosa justo en el horizonte */
+.bg__horizon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 30%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.85), rgba(255, 45, 149, 0.85), transparent);
+  box-shadow: 0 0 26px 8px rgba(255, 45, 149, 0.35), 0 0 60px 22px rgba(0, 229, 255, 0.16);
+}
+
+/* grilla en perspectiva */
+.bg__grid {
+  position: absolute;
+  left: -60%;
+  right: -60%;
+  bottom: -6%;
+  height: 52%;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(0, 229, 255, 0.5) 0 1.5px, transparent 1.5px 64px),
+    repeating-linear-gradient(180deg, rgba(255, 45, 149, 0.42) 0 1.5px, transparent 1.5px 52px);
+  transform: perspective(340px) rotateX(66deg);
+  transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.9) 45%, #000 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.9) 45%, #000 100%);
+  opacity: 0.75;
+}
+
+.bg__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(115% 78% at 50% 42%, transparent 42%, rgba(4, 1, 10, 0.82) 100%);
+}
+
+/* ------------------------------------------------------------------ app --- */
+.app {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: max(18px, env(safe-area-inset-top)) 18px calc(20px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+}
+
+.screen { display: none; flex-direction: column; flex: 1; }
+.screen.is-active { display: flex; animation: screen-in 0.42s cubic-bezier(0.22, 0.68, 0.32, 1) both; }
+
+@keyframes screen-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.99); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ------------------------------------------------------------------ tipo -- */
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  text-shadow: 0 0 14px rgba(0, 229, 255, 0.55);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.1rem, 11vw, 2.9rem);
+  line-height: 1.02;
+  letter-spacing: 0.03em;
+  background: linear-gradient(96deg, #ffe6f5 0%, var(--magenta-soft) 38%, var(--violet) 68%, var(--cyan) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* Halo magenta original... */
+  text-shadow: 0 0 26px rgba(255, 45, 149, 0.32);
+  /* ...y halo oscuro por drop-shadow (no por text-shadow: con
+     background-clip:text un text-shadow oscuro se pinta ENCIMA del degradé
+     y lo ensucia). Así el degradé queda intacto y el texto se despega del sol. */
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 10px rgba(0, 0, 0, 0.65));
+}
+
+.subtitle {
+  color: #ece6ff;
+  font-size: 1.02rem;
+  font-weight: 500;
+  max-width: 34ch;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75), 0 0 14px rgba(0, 0, 0, 0.6);
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+.hint--warn { color: var(--magenta-soft); }
+
+/* ------------------------------------------------------------------ home -- */
+.screen--home { justify-content: space-between; gap: 28px; }
+
+.home__top {
+  position: relative;
+  /* Aísla el stacking context: el velo del ::before queda detrás del texto
+     pero por delante del fondo .bg (que vive en z-index -1). */
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding-top: clamp(8px, 4vh, 40px);
+  text-align: center;
+}
+
+/* Velo oscuro difuso detrás del bloque de texto: el texto nunca queda
+   directamente sobre el sol. Sin bordes visibles ni desborde horizontal:
+   el radial ya llega a transparente antes de los costados. */
+.home__top::before {
+  content: '';
+  position: absolute;
+  inset: -6% 0 -12%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    74% 64% at 50% 46%,
+    rgba(6, 2, 14, 0.76) 0%,
+    rgba(6, 2, 14, 0.64) 40%,
+    rgba(6, 2, 14, 0.34) 66%,
+    rgba(6, 2, 14, 0) 100%
+  );
+}
+
+.home__bottom { display: flex; flex-direction: column; gap: 14px; }
+
+.logo-badge {
+  animation: bob 6s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 45, 149, 0.42)) drop-shadow(0 0 46px rgba(0, 229, 255, 0.22));
+}
+
+.logo {
+  display: block;
+  width: clamp(132px, 42vw, 172px);
+  height: auto;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-9px); }
+}
+
+/* --------------------------------------------------------------- buttons -- */
+.btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 58px;
+  padding: 14px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.98rem;
+  letter-spacing: 0.04em;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.22s ease, filter 0.22s ease, opacity 0.22s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn--primary {
+  /* Los tres stops del degradé garantizan >= 4.74:1 con el texto blanco (WCAG AA). */
+  background: linear-gradient(120deg, #d81b87 0%, #a91fc0 48%, #7c3aed 100%);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: var(--glow-magenta), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.45);
+}
+
+.btn--primary:hover:not(:disabled) { filter: brightness(1.07); }
+.btn:active:not(:disabled) { transform: translateY(1px) scale(0.985); }
+.btn:disabled { cursor: default; opacity: 0.88; }
+
+.btn--hero {
+  min-height: 68px;
+  font-size: 1.02rem;
+  padding-inline: 22px;
+  animation: hero-pulse 3.4s ease-in-out infinite;
+}
+
+@keyframes hero-pulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(255, 45, 149, 0.45), 0 0 34px rgba(255, 45, 149, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.28); }
+  50%      { box-shadow: 0 0 18px rgba(255, 45, 149, 0.62), 0 0 52px rgba(124, 58, 237, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.28); }
+}
+
+.btn__arrow { display: inline-flex; transform: translateY(0.5px); }
+.btn--hero:active .btn__arrow { transform: translate(2px, 0.5px); }
+
+/* contador dentro del botón "Siguiente" */
+.btn__count { display: none; position: relative; width: 26px; height: 26px; flex: 0 0 auto; }
+.btn.is-counting .btn__count { display: inline-flex; align-items: center; justify-content: center; }
+
+.ring { position: absolute; inset: 0; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 2.5; }
+.ring__track { stroke: rgba(255, 255, 255, 0.28); }
+.ring__progress {
+  stroke: #ffffff;
+  stroke-linecap: round;
+  stroke-dasharray: 69.115;
+  stroke-dashoffset: 0;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.85));
+}
+.ring__num {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 9px 16px 9px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.88rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.ghost-btn:hover { color: var(--text); border-color: var(--cyan); box-shadow: 0 0 16px rgba(0, 229, 255, 0.25); }
+.ghost-btn:active { transform: translateY(1px); }
+
+/* ------------------------------------------------------------------ game -- */
+/* gap 10px: con las 4 filas compactas, todo entra en un viewport de 660px. */
+.screen--game { gap: 11px; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 40px;
+  /* 1px extra a la izquierda: compensa el letter-spacing que queda después
+     del último carácter y descentraba el contenido hacia la izquierda. */
+  padding: 9px 15px 9px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(0, 229, 255, 0.07);
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.pill b { font-family: var(--font-display); font-size: 1em; line-height: 1; color: var(--cyan); text-shadow: 0 0 12px rgba(0, 229, 255, 0.6); }
+.pill.is-hot { border-color: rgba(255, 45, 149, 0.6); background: rgba(255, 45, 149, 0.12); }
+.pill.is-hot b { color: var(--magenta-soft); text-shadow: 0 0 12px rgba(255, 45, 149, 0.7); }
+
+.card {
+  padding: 20px 20px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+  box-shadow: 0 18px 40px -22px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.card--verb { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 7px; }
+
+/* Una sola fila: [infinitivo + altavoz] [distintivo]. Los tres centros ópticos
+   quedan alineados porque todo se centra en la misma línea de flex. */
+.verb-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  max-width: 100%;
+}
+
+/* Traducción del infinitivo (inglés · ruso): línea discreta, no compite
+   con el infinitivo ni con el distintivo de irregular. */
+.card__translation {
+  max-width: 34ch;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+/* ------------------------------------------------------- verbo irregular -- */
+/* Aviso amarillo a la derecha del altavoz: visible ANTES de responder.
+   Compacto a propósito: [infinitivo] [altavoz] [irregular] tiene que entrar
+   en una sola línea incluso con el infinitivo más largo a 320px de ancho. */
+.badge--irregular {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex: 0 0 auto;
+  padding: 2px 6px 2px 5px;
+  border: 1px solid rgba(247, 201, 72, 0.58);
+  border-radius: 999px;
+  background: rgba(247, 201, 72, 0.12);
+  color: var(--gold);
+  font-family: var(--font-body);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  line-height: 1;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(247, 201, 72, 0.45);
+  box-shadow: 0 0 14px rgba(247, 201, 72, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  animation: badge-in 0.24s ease-out both;
+}
+.badge--irregular[hidden] { display: none; }
+
+.badge__icon {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 0 4px rgba(247, 201, 72, 0.6));
+}
+
+@keyframes badge-in {
+  from { opacity: 0; transform: translateY(4px) scale(0.96); }
+  to   { opacity: 1; transform: none; }
+}
+
+.infinitive {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 2px 6px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.35rem, 6.6vw, 2.5rem);
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+  max-width: 100%;
+  cursor: pointer;
+  text-shadow: 0 0 16px rgba(0, 229, 255, 0.5), 0 0 42px rgba(255, 45, 149, 0.32);
+  transition: transform 0.14s ease, color 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+#infinitive { white-space: nowrap; }
+.infinitive:hover { color: #ffffff; }
+.infinitive:active { transform: scale(0.975); }
+.infinitive .speaker { color: var(--cyan); opacity: 0.85; flex: 0 0 auto; }
+.infinitive.is-speaking .speaker { animation: speak-pulse 0.75s ease-in-out infinite; opacity: 1; }
+
+@keyframes speak-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50%      { transform: scale(1.18); opacity: 1; }
+}
+
+/* --------------------------------------------------------------- fields -- */
+/* Cada campo es una fila: [etiqueta] [input] [✓ | icono de audio].         */
+/* La 1ª columna tiene ancho fijo para que los cuatro inputs queden         */
+/* alineados verticalmente entre sí (una grilla por campo no se coordina).  */
+.fields { display: flex; flex-direction: column; gap: 7px; }
+
+.field {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  grid-template-areas:
+    "label input right"
+    "status status status";
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 3px;
+  padding: 5px 8px 6px 11px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  background: rgba(12, 6, 28, 0.6);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+/* Etiqueta legible: blanca, sin el "aire" del letter-spacing ancho. */
+.field__label {
+  grid-area: label;
+  font-size: 0.8rem;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* Columna derecha de la fila: ✓ compacto (arriba) + icono de audio. */
+.field__right { grid-area: right; display: flex; align-items: center; gap: 7px; }
+
+.field__check {
+  display: none;
+  color: var(--green);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 0 12px rgba(61, 220, 151, 0.55);
+}
+.field.is-locked.is-correct .field__check { display: inline; }
+
+.field__speak { display: none; color: var(--cyan); opacity: 0.55; }
+.field.is-locked .field__speak { display: inline-flex; }
+
+.field__input {
+  grid-area: input;
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 11px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(6, 2, 14, 0.72);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1.02rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+.field__input::placeholder { color: rgba(169, 156, 208, 0.45); font-weight: 500; }
+.field__input:focus {
+  outline: none;
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 1px var(--cyan), 0 0 18px rgba(0, 229, 255, 0.3);
+}
+.field__input:read-only { cursor: pointer; background: rgba(6, 2, 14, 0.5); }
+
+/* La devolución ocupa toda la fila, debajo del input, y SOLO existe cuando
+   hay texto: los campos correctos no agregan ninguna línea (la altura de la
+   fila no cambia al aceptar) — el visto va en la columna derecha. */
+.field__status {
+  grid-area: status;
+  display: none;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 1px;
+  font-size: 0.82rem;
+  line-height: 1.25;
+  font-weight: 600;
+}
+.field__status:not(:empty) { display: flex; }
+
+.field__mark { font-size: 0.9rem; }
+.field__answer { font-weight: 700; }
+.field__extra { color: var(--muted); font-size: 0.8rem; font-weight: 500; }
+
+/* Aviso suave: coincidió solo sin tildes (p. ej. tuteo en vez de voseo).
+   No es un error: el campo sigue verde; solo se sugiere la tilde. */
+.field__tilde {
+  color: var(--gold);
+  font-size: 0.8rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.field.is-correct {
+  border-color: rgba(61, 220, 151, 0.55);
+  background: rgba(61, 220, 151, 0.07);
+}
+.field.is-correct .field__input { border-color: rgba(61, 220, 151, 0.5); }
+
+.field.is-wrong {
+  border-color: rgba(255, 77, 109, 0.72);
+  background: rgba(255, 77, 109, 0.08);
+  box-shadow: 0 0 22px -6px rgba(255, 77, 109, 0.5);
+}
+.field.is-wrong .field__label { color: var(--red); }
+.field.is-wrong .field__status { color: #ff9db0; }
+.field.is-wrong .field__answer { color: #fff; text-shadow: 0 0 12px rgba(255, 77, 109, 0.6); }
+.field.is-wrong .field__input {
+  border-color: rgba(255, 77, 109, 0.85);
+  color: #ffc9d3;
+}
+
+.is-shaking { animation: shake 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-7px); }
+  40%, 60% { transform: translateX(7px); }
+}
+
+/* ------------------------------------------------------------- feedback -- */
+.feedback {
+  min-height: 21px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--muted);
+  text-align: center;
+}
+.feedback.is-good { color: var(--green); text-shadow: 0 0 14px rgba(61, 220, 151, 0.45); }
+.feedback.is-bad { color: #ff9db0; }
+
+/* -------------------------------------------------------------- actions -- */
+.actions { margin-top: auto; padding-top: 5px; }
+.actions .btn { min-height: 56px; }
+
+/* ------------------------------------------------- respeto por motion --- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .logo-badge { animation: none; }
+}
+
+/* ------------------------------------------------ pantallas muy bajitas -- */
+@media (max-height: 720px) {
+  .home__top { padding-top: 0; gap: 10px; }
+  .logo { width: clamp(104px, 30vw, 128px); }
+  .card--verb { padding: 13px 15px 12px; }
+  .infinitive { font-size: clamp(1.35rem, 6.6vw, 2.15rem); }
+}
+
+/* --------------------------------------------- pantallas muy angostas --- */
+/* Más ancho útil en el móvil chico: la fila del infinitivo (con el distintivo
+   de irregular) no puede desbordar a 320px. */
+@media (max-width: 380px) {
+  .app { padding-inline: 13px; }
+  .card--verb { padding-inline: 11px; }
+  .field { grid-template-columns: 76px 1fr auto; padding-left: 10px; padding-right: 7px; }
+}
+
+/* ------------------------------------------------------ escritorio suave -- */
+@media (min-width: 520px) {
+  .app { padding-inline: 0; }
+  .screen--home { padding-top: 4vh; }
+}

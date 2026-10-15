@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es-UY">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0a0416">
+  <meta name="description" content="Practicá los 100 verbos más útiles del español rioplatense: presente del indicativo con voseo.">
+  <title>Rioplatense · Entrenador de verbos</title>
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23140a2e'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23f7c948'/%3E%3C/svg%3E">
+
+  <!-- Tipografías opcionales: si no hay internet, cae a las fuentes del sistema. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap">
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Fondo retrowave: atardecer + grilla en perspectiva ------------------ -->
+  <div class="bg" aria-hidden="true">
+    <div class="bg__sky"></div>
+    <div class="bg__stars"></div>
+    <div class="bg__sun"></div>
+    <div class="bg__scan"></div>
+    <div class="bg__horizon"></div>
+    <div class="bg__grid"></div>
+    <div class="bg__vignette"></div>
+  </div>
+
+  <div class="app" id="app">
+
+    <!-- =============================== HOME =============================== -->
+    <main class="screen screen--home is-active" id="screen-home">
+
+      <div class="home__top">
+        <div class="logo-badge">
+          <!-- Escudo retrowave con la bandera de Uruguay (SVG inline) -->
+          <svg class="logo" viewBox="0 0 160 160" role="img" aria-labelledby="logo-title">
+            <title id="logo-title">Escudo retrowave con la bandera de Uruguay</title>
+            <defs>
+              <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#ff2d95"/>
+                <stop offset="50%" stop-color="#a855f7"/>
+                <stop offset="100%" stop-color="#00e5ff"/>
+              </linearGradient>
+              <linearGradient id="badgeGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#241150"/>
+                <stop offset="100%" stop-color="#0c0519"/>
+              </linearGradient>
+              <radialGradient id="badgeGlow" cx="50%" cy="26%" r="78%">
+                <stop offset="0%" stop-color="#ff2d95" stop-opacity=".42"/>
+                <stop offset="60%" stop-color="#a855f7" stop-opacity=".10"/>
+                <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+              </radialGradient>
+              <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+                <rect width="4" height="1.3" fill="#00e5ff" opacity=".07"/>
+              </pattern>
+              <clipPath id="badgeClip"><rect x="8" y="8" width="144" height="144" rx="36"/></clipPath>
+              <clipPath id="flagClip"><rect x="0" y="0" width="96" height="64" rx="4"/></clipPath>
+            </defs>
+
+            <g clip-path="url(#badgeClip)">
+              <rect x="8" y="8" width="144" height="144" fill="url(#badgeGrad)"/>
+              <rect x="8" y="8" width="144" height="144" fill="url(#badgeGlow)"/>
+              <rect x="8" y="8" width="144" height="144" fill="url(#scan)"/>
+
+              <!-- Bandera de Uruguay: 9 franjas alternadas (blanco / azul) -->
+              <g transform="translate(32,48)" clip-path="url(#flagClip)">
+                <rect y="0" width="96" height="7.111" fill="#ffffff"/>
+                <rect y="7.111" width="96" height="7.111" fill="#0038a8"/>
+                <rect y="14.222" width="96" height="7.111" fill="#ffffff"/>
+                <rect y="21.333" width="96" height="7.111" fill="#0038a8"/>
+                <rect y="28.444" width="96" height="7.111" fill="#ffffff"/>
+                <rect y="35.556" width="96" height="7.111" fill="#0038a8"/>
+                <rect y="42.667" width="96" height="7.111" fill="#ffffff"/>
+                <rect y="49.778" width="96" height="7.111" fill="#0038a8"/>
+                <rect y="56.889" width="96" height="7.111" fill="#ffffff"/>
+
+                <!-- Cantón blanco con el Sol de Mayo -->
+                <rect width="28.444" height="28.444" fill="#ffffff"/>
+                <g transform="translate(14.222,14.222)">
+                  <g fill="#f7c948">
+                    <polygon points="0,-6.2 1.15,-10.4 -1.15,-10.4" transform="rotate(0)"/>
+                    <path d="M0,-6.2 C2.3,-7.6 -2.3,-9 0,-10.6 C1,-9.1 1,-7.6 0,-6.2 Z" transform="rotate(22.5)"/>
+                    <polygon points="0,-6.2 1.15,-10.4 -1.15,-10.4" transform="rotate(45)"/>
+                    <path d="M0,-6.2 C2.3,-7.6 -2.3,-9 0,-10.6 C1,-9.1 1,-7.6 0,-6.2 Z" transform="rotate(67.5)"/>
+                    <polygon points="0,-6.2 1.15,-10.4 -1.15,-10.4" transform="rotate(90)"/>
+                    <path d="M0,-6.2 C2.3,-7.6 -2.3,-9 0,-10.6 C1,-9.1 1,-7.6 0,-6.2 Z" transform="rotate(112.5)"/>
+                    <polygon points="0,-6.2 1.15,-10.4 -1.15,-10.4" transform="rotate(135)"/>
+                    <path d="M0,-6.2 C2.3,-7.6 -2.3,-9 0,-10.6 C1,-9.1 1,-7.6 0,-6.2 Z" transform="rotate(157.5)"/>
+                    <polygon points="0,-6.2 1.15,-10.4 -1.15,-10.4" transform="rotate(180)"/>
+                    <path d="M0,-6.2 C2.3,-7.6 -2.3,-9 0,-10.6 C1,-9.1 1,-7.6 0,-6.2 Z" transform="rotate(202.5)"/>
+                    <polygon points="0,-6.2 1.15,-10.4 -1.15,-10.4" transform="rotate(225)"/>
+                    <path d="M0,-6.2 C2.3,-7.6 -2.3,-9 0,-10.6 C1,-9.1 1,-7.6 0,-6.2 Z" transform="rotate(247.5)"/>
+                    <polygon points="0,-6.2 1.15,-10.4 -1.15,-10.4" transform="rotate(270)"/>
+                    <path d="M0,-6.2 C2.3,-7.6 -2.3,-9 0,-10.6 C1,-9.1 1,-7.6 0,-6.2 Z" transform="rotate(292.5)"/>
+                    <polygon points="0,-6.2 1.15,-10.4 -1.15,-10.4" transform="rotate(315)"/>
+                    <path d="M0,-6.2 C2.3,-7.6 -2.3,-9 0,-10.6 C1,-9.1 1,-7.6 0,-6.2 Z" transform="rotate(337.5)"/>
+                  </g>
+                  <circle r="5.3" fill="#f7c948" stroke="#d9a22b" stroke-width=".5"/>
+                  <ellipse cx="-1.7" cy="-1" rx=".62" ry=".8" fill="#8a5a12"/>
+                  <ellipse cx="1.7" cy="-1" rx=".62" ry=".8" fill="#8a5a12"/>
+                  <path d="M-1.7 1.6 Q0 3.2 1.7 1.6" fill="none" stroke="#8a5a12" stroke-width=".62" stroke-linecap="round"/>
+                </g>
+                <rect width="96" height="64" rx="4" fill="none" stroke="rgba(255,255,255,.38)"/>
+              </g>
+            </g>
+
+            <rect x="9.5" y="9.5" width="141" height="141" rx="34.5" fill="none" stroke="url(#ringGrad)" stroke-width="3"/>
+          </svg>
+        </div>
+
+        <p class="eyebrow">Español del Río de la Plata</p>
+        <h1 class="title">Rioplatense</h1>
+        <p class="subtitle">Entrená el español que se habla en Uruguay y Buenos Aires: voseo de verdad, sin vueltas.</p>
+      </div>
+
+      <div class="home__bottom">
+        <button class="btn btn--primary btn--hero" id="start-btn" type="button">
+          <span class="btn__label">Aprendé los 100 verbos más útiles</span>
+          <span class="btn__arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+          </span>
+        </button>
+
+        <p class="hint" id="home-audio-hint">Tocá las palabras para escuchar la pronunciación.</p>
+      </div>
+    </main>
+
+    <!-- =============================== GAME =============================== -->
+    <section class="screen screen--game" id="screen-game" hidden>
+
+      <header class="topbar">
+        <button class="ghost-btn" id="back-btn" type="button">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H6M11 18l-6-6 6-6"/></svg>
+          Volver
+        </button>
+        <span class="pill" id="streak-pill">Racha&nbsp;<b id="streak-value">0</b></span>
+      </header>
+
+      <div class="card card--verb" id="verb-card">
+        <!-- Una sola línea centrada: [infinitivo] [altavoz] [distintivo irregular]. -->
+        <div class="verb-line">
+          <button class="infinitive" id="infinitive-btn" type="button" aria-label="Escuchar el infinitivo">
+            <span id="infinitive">—</span>
+            <svg class="speaker" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 9v6h3l4 4V5L7 9H4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 6a9 9 0 0 1 0 12"/>
+            </svg>
+          </button>
+          <!-- Aviso inmediato: el verbo es irregular (visible antes de responder). -->
+          <p class="badge badge--irregular" id="irregular-badge" hidden>
+            <svg class="badge__icon" viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M10.3 3.6 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0z"/>
+              <path d="M12 9v4.5"/><path d="M12 17.2h.01"/>
+            </svg>
+            <span>irregular</span>
+          </p>
+        </div>
+        <!-- Traducción del infinitivo: inglés · ruso (pedido explícito, única excepción al español). -->
+        <p class="card__translation" id="verb-translation"></p>
+      </div>
+
+      <div class="fields" id="fields"></div>
+
+      <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
+
+      <div class="actions">
+        <button class="btn btn--primary" id="action-btn" type="button">
+          <span class="btn__label" id="action-label">Aceptar</span>
+          <span class="btn__count" aria-hidden="true">
+            <svg class="ring" viewBox="0 0 26 26">
+              <circle class="ring__track" cx="13" cy="13" r="11"/>
+              <circle class="ring__progress" id="ring-progress" cx="13" cy="13" r="11"/>
+            </svg>
+            <span class="ring__num" id="ring-num">3</span>
+          </span>
+        </button>
+      </div>
+    </section>
+
+    <noscript>
+      <p class="hint hint--warn">Esta app necesita JavaScript para funcionar.</p>
+    </noscript>
+  </div>
+
+  <script src="js/verbs.js"></script>
+  <script src="js/audio-map.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
