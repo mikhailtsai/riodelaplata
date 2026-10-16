@@ -49,7 +49,7 @@
   }
 
   /* ---------------------------------------------------------------- router -- */
-  var SCREENS = ['home', 'game'];
+  var SCREENS = ['home', 'game', 'history'];
 
   function showScreen(name) {
     SCREENS.forEach(function (key) {
@@ -61,6 +61,106 @@
     });
     if (name !== 'game') Audio.cancel();
     global.scrollTo(0, 0);
+  }
+
+  /* ==========================================================================
+   * Progreso: puntos acumulados + historial de las últimas jugadas (localStorage)
+   * ======================================================================== */
+  var POINTS_KEY = 'rpl.verbs.points.v1';
+  var LOG_KEY = 'rpl.verbs.log.v1';
+  var LOG_LIMIT = 10;               // el historial muestra las 10 últimas
+  var POINTS_EXACT = 2;             // forma correcta, con la tilde correcta
+  var POINTS_TILDE = 1;             // correcta pero con la tilde mal
+
+  var progress = (function () {
+    var points = 0;
+    var log = [];                   // más reciente primero
+
+    function load() {
+      var saved = Number(safeGet(POINTS_KEY));
+      points = isFinite(saved) && saved > 0 ? Math.floor(saved) : 0;
+
+      var raw = safeGet(LOG_KEY);
+      if (!raw) { log = []; return; }
+      var parsed;
+      try { parsed = JSON.parse(raw); } catch (e) { log = []; return; } // corrupto
+      if (!Array.isArray(parsed)) { log = []; return; }
+      log = parsed.filter(function (item) {
+        return item && typeof item === 'object' && typeof item.verb === 'string';
+      }).slice(0, LOG_LIMIT);
+    }
+
+    function save() {
+      safeSet(POINTS_KEY, String(points));
+      safeSet(LOG_KEY, JSON.stringify(log.slice(0, LOG_LIMIT)));
+    }
+
+    function record(entry) {
+      points += Math.max(0, Number(entry.points) || 0);
+      log.unshift(entry);
+      if (log.length > LOG_LIMIT) log = log.slice(0, LOG_LIMIT);
+      save();
+      paint();
+    }
+
+    function entries() { return log.slice(); }
+
+    function paint() {
+      var pv = $('points-value');
+      if (pv) pv.textContent = String(points);
+      var hp = $('history-points');
+      if (hp) hp.textContent = String(points);
+    }
+
+    return { load: load, record: record, entries: entries, paint: paint, points: function () { return points; } };
+  })();
+
+  /** "hace 3 min" — tiempo relativo, sin dependencias. */
+  function relativeTime(ts) {
+    var diff = Date.now() - Number(ts || 0);
+    if (!isFinite(diff) || diff < 0) diff = 0;
+    var s = Math.floor(diff / 1000);
+    if (s < 60) return 'recién';
+    var m = Math.floor(s / 60);
+    if (m < 60) return 'hace ' + m + ' min';
+    var h = Math.floor(m / 60);
+    if (h < 24) return 'hace ' + h + ' h';
+    return 'hace ' + Math.floor(h / 24) + ' d';
+  }
+
+  /** Pinta el historial: la última jugada arriba, el resto debajo. */
+  function renderHistory() {
+    var list = $('history-list');
+    var empty = $('history-empty');
+    if (!list) return;
+
+    var items = progress.entries();
+    list.innerHTML = '';
+    if (empty) empty.hidden = items.length > 0;
+    progress.paint();
+
+    items.forEach(function (item) {
+      var li = document.createElement('li');
+      li.className = 'history__item';
+
+      var verb = document.createElement('span');
+      verb.className = 'history__verb';
+      verb.textContent = item.verb;
+
+      var score = document.createElement('span');
+      score.className = 'history__score';
+      score.textContent = (Number(item.points) || 0) + ' / ' + (Number(item.max) || 0);
+      if (Number(item.points) === Number(item.max)) score.classList.add('is-perfect');
+
+      var when = document.createElement('time');
+      when.className = 'history__when';
+      when.textContent = relativeTime(item.at);
+
+      li.appendChild(verb);
+      li.appendChild(score);
+      li.appendChild(when);
+      list.appendChild(li);
+    });
   }
 
   /* ==========================================================================
@@ -288,10 +388,12 @@
       if (tickTimer) { clearInterval(tickTimer); tickTimer = null; }
     }
 
+    // La racha ya no vive en la barra superior (ahí van el historial y los
+    // puntos): se muestra como subtítulo en la pantalla de historial.
     function updateStreakUI() {
-      els.streakValue.textContent = String(streak);
-      els.streakPill.classList.toggle('is-hot', streak >= 3);
-      els.streakPill.setAttribute('title', 'Racha actual: ' + streak + ' · Mejor: ' + best);
+      var el = $('history-streak');
+      if (!el) return;
+      el.textContent = 'Racha actual: ' + streak + ' \u00b7 Mejor: ' + best;
     }
 
     /* ------------------------------------------------------ ciclo del juego -- */
@@ -362,6 +464,7 @@
 
       var results = FIELDS.map(evaluate);
       var wrong = results.filter(function (r) { return !r.correct; });
+      var gained = 0;
 
       results.forEach(function (result) {
         var input = inputs[result.field.key];
@@ -369,6 +472,8 @@
         input.readOnly = true;                 // queda bloqueado
         wrap.classList.add('is-locked');
         if (result.correct) {
+          // 2 puntos si la tilde está bien; 1 si acierta pero sin la tilde.
+          gained += result.accentOnly ? POINTS_TILDE : POINTS_EXACT;
           wrap.classList.add('is-correct');
           setStatus(result.field, 'correct', result.canonical, result.accentOnly);
         } else {
@@ -398,6 +503,16 @@
       }
       saveStreak();
       updateStreakUI();
+
+      // Historial + puntos (localStorage): una entrada por palabra jugada.
+      progress.record({
+        verb: verb.infinitive,
+        points: gained,
+        max: FIELDS.length * POINTS_EXACT,
+        correct: results.length - wrong.length,
+        total: results.length,
+        at: Date.now()
+      });
 
       startCountdown();
     }
@@ -452,9 +567,7 @@
         actionBtn: $('action-btn'),
         actionLabel: $('action-label'),
         ringProgress: $('ring-progress'),
-        ringNum: $('ring-num'),
-        streakValue: $('streak-value'),
-        streakPill: $('streak-pill')
+        ringNum: $('ring-num')
       };
 
       recent = loadHistory();
@@ -516,6 +629,24 @@
       MODULES.verbs.teardown();
       showScreen('home');
     });
+
+    var historyBtn = $('history-btn');
+    if (historyBtn) {
+      historyBtn.addEventListener('click', function () {
+        renderHistory();
+        showScreen('history');
+      });
+    }
+  }
+
+  function initHistory() {
+    var backBtn = $('history-back-btn');
+    if (!backBtn) return;
+    // "Volver" regresa al juego tal como estaba: la palabra y su resultado
+    // siguen en pantalla, no se reinicia la jugada.
+    backBtn.addEventListener('click', function () {
+      showScreen('game');
+    });
   }
 
   function init() {
@@ -527,6 +658,9 @@
     MODULES.verbs.mount();
     initHome();
     initGame();
+    initHistory();
+    progress.load();
+    progress.paint();
     showScreen('home');
   }
 

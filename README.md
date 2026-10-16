@@ -106,6 +106,20 @@ contenedor recortado (solo para lectores de pantalla): no ocupa alto ni ancho.
   sin romperse: el historial vive también en memoria.
 - Nunca repite el verbo que está en pantalla.
 
+### Puntos e historial
+
+- **Puntos:** al aceptar, cada forma vale **2 puntos** si está correcta **con la tilde
+  correcta**, **1 punto** si es correcta pero sin la tilde, y **0** si está mal. Máximo por
+  palabra: **10**. El total acumulado se ve arriba a la derecha (`Puntos 37`).
+- **Historial:** se guardan las últimas **10** jugadas (verbo, `puntos / 10` y cuándo), con la
+  **más reciente arriba**. La **racha** (actual y mejor) se muestra ahí.
+- El **botón central** de la barra superior (icono de reloj) abre el historial. Su **Volver**
+  regresa al juego **tal como estaba**: la palabra y su resultado siguen en pantalla, no se
+  reinicia la jugada.
+- Claves de `localStorage`: `rpl.verbs.history.v1` (últimos 20 verbos, sin repetir),
+  `rpl.verbs.streak.v1` (racha), `rpl.verbs.points.v1` (puntos) y `rpl.verbs.log.v1`
+  (historial). Si están corruptas o bloqueadas, la app arranca en blanco sin romperse.
+
 ---
 
 ## Pronunciación
