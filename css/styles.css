@@ -375,8 +375,8 @@ button { font: inherit; color: inherit; }
 .ghost-btn:active { transform: translateY(1px); }
 
 /* ------------------------------------------------------------------ game -- */
-/* gap 10px: con las 4 filas compactas, todo entra en un viewport de 660px. */
-.screen--game { gap: 11px; }
+/* gap 9px: con las 5 filas compactas, todo entra en un viewport de 660px. */
+.screen--game { gap: 9px; }
 
 .topbar {
   display: flex;
@@ -511,9 +511,9 @@ button { font: inherit; color: inherit; }
 
 /* --------------------------------------------------------------- fields -- */
 /* Cada campo es una fila: [etiqueta] [input] [✓ | icono de audio].         */
-/* La 1ª columna tiene ancho fijo para que los cuatro inputs queden         */
+/* La 1ª columna tiene ancho fijo para que los cinco inputs queden          */
 /* alineados verticalmente entre sí (una grilla por campo no se coordina).  */
-.fields { display: flex; flex-direction: column; gap: 7px; }
+.fields { display: flex; flex-direction: column; gap: 5px; }
 
 .field {
   display: grid;
@@ -523,27 +523,31 @@ button { font: inherit; color: inherit; }
     "status status status";
   align-items: center;
   column-gap: 8px;
-  row-gap: 3px;
-  padding: 5px 8px 6px 11px;
+  row-gap: 2px;
+  padding: 3px 7px 4px 10px;
   border: 1px solid var(--line-soft);
   border-radius: var(--radius-sm);
   background: rgba(12, 6, 28, 0.6);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-/* Etiqueta legible: blanca, sin el "aire" del letter-spacing ancho. */
+/* Etiqueta legible: blanca, en versalita chica para que las dos etiquetas
+   largas ("él / ella / usted", "ellos / ellas / ustedes") se partan en dos o
+   tres líneas parejas dentro de la columna angosta y la fila no crezca de más. */
 .field__label {
   grid-area: label;
-  font-size: 0.8rem;
-  line-height: 1.1;
+  font-size: 0.74rem;
+  line-height: 1.08;
   font-weight: 700;
   letter-spacing: 0.005em;
   text-transform: uppercase;
   color: var(--text);
 }
 
-/* Columna derecha de la fila: ✓ compacto (arriba) + icono de audio. */
-.field__right { grid-area: right; display: flex; align-items: center; gap: 7px; }
+/* Columna derecha de la fila: ✓ compacto + icono de audio. El ancho está
+   reservado siempre (los iconos aparecen recién al aceptar) para que los cinco
+   inputs midan exactamente lo mismo en todos los estados, estén bloqueados o no. */
+.field__right { grid-area: right; display: flex; align-items: center; justify-content: flex-end; gap: 7px; width: 38px; }
 
 .field__check {
   display: none;
@@ -592,21 +596,20 @@ button { font: inherit; color: inherit; }
   flex-wrap: wrap;
   gap: 4px;
   margin-top: 1px;
-  font-size: 0.82rem;
-  line-height: 1.25;
+  font-size: 0.78rem;
+  line-height: 1.15;
   font-weight: 600;
 }
 .field__status:not(:empty) { display: flex; }
 
 .field__mark { font-size: 0.9rem; }
 .field__answer { font-weight: 700; }
-.field__extra { color: var(--muted); font-size: 0.8rem; font-weight: 500; }
 
 /* Aviso suave: coincidió solo sin tildes (p. ej. tuteo en vez de voseo).
    No es un error: el campo sigue verde; solo se sugiere la tilde. */
 .field__tilde {
   color: var(--gold);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 500;
   opacity: 0.9;
 }
@@ -640,15 +643,23 @@ button { font: inherit; color: inherit; }
 }
 
 /* ------------------------------------------------------------- feedback -- */
+/* El resumen ("¡Perfecto!…" / "Casi. Revisá: …") ya no se pinta: la devolución
+   visual son los colores de cada fila y la corrección debajo del campo meta.
+   El texto se conserva en el DOM como región viva recortada (sr-only) para que
+   el resultado se siga anunciando sin ocupar ni un píxel de alto. */
 .feedback {
-  min-height: 21px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  line-height: 1.3;
-  color: var(--muted);
-  text-align: center;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
-.feedback.is-good { color: var(--green); text-shadow: 0 0 14px rgba(61, 220, 151, 0.45); }
+.feedback.is-good { color: var(--green); }
 .feedback.is-bad { color: #ff9db0; }
 
 /* -------------------------------------------------------------- actions -- */
@@ -669,8 +680,9 @@ button { font: inherit; color: inherit; }
 @media (max-height: 720px) {
   .home__top { padding-top: 0; gap: 10px; }
   .logo { width: clamp(104px, 30vw, 128px); }
-  .card--verb { padding: 13px 15px 12px; }
+  .card--verb { padding: 12px 15px 10px; }
   .infinitive { font-size: clamp(1.35rem, 6.6vw, 2.15rem); }
+  .actions .btn { min-height: 54px; }
 }
 
 /* --------------------------------------------- pantallas muy angostas --- */
@@ -679,7 +691,8 @@ button { font: inherit; color: inherit; }
 @media (max-width: 380px) {
   .app { padding-inline: 13px; }
   .card--verb { padding-inline: 11px; }
-  .field { grid-template-columns: 76px 1fr auto; padding-left: 10px; padding-right: 7px; }
+  .field { grid-template-columns: 74px 1fr auto; }
+  .field__label { font-size: 0.7rem; }
 }
 
 /* ------------------------------------------------------ escritorio suave -- */

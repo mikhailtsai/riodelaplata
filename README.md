@@ -10,8 +10,8 @@ Hoy tiene **dos pantallas**:
 1. **Inicio** — logo (escudo con la bandera de Uruguay), título, subtítulo y el botón
    *"Aprendé los 100 verbos más útiles"*.
 2. **Entrenador de verbos** — muestra un infinitivo con su traducción (inglés · ruso)
-   y cuatro campos (`yo`, `vos`, `nosotros`, `él / ella / usted / ustedes`) para
-   escribir el presente del indicativo.
+   y cinco campos (`yo`, `vos`, `nosotros`, `él / ella / usted`, `ellos / ellas / ustedes`)
+   para escribir el presente del indicativo.
 
 ---
 
@@ -60,35 +60,42 @@ Sin frameworks, sin npm, sin paso de compilación. Solo `<script>` clásicos.
 1. Debajo del infinitivo aparece su traducción en **inglés y ruso** (`to speak · говорить`),
    por si no conocés el verbo. Es lo único que no está en español: el resto de la interfaz
    sí lo está.
-2. Escribí las cuatro formas y tocá **Aceptar**.
-3. Los campos quedan **bloqueados**. Los correctos se marcan en verde; los incorrectos en
-   **rojo con la respuesta correcta al lado**.
+2. Escribí las **cinco** formas y tocá **Aceptar**.
+3. Los campos quedan **bloqueados**. Los correctos se marcan en verde con un **✓ compacto**
+   en su columna derecha (no agregan ninguna línea de texto); los incorrectos van en **rojo
+   con la respuesta correcta debajo**.
 4. El botón se transforma en **Siguiente**, deshabilitado durante **3 segundos**, con un
    **anillo y un número** que muestran la cuenta regresiva.
 5. Cuando se habilita, tocás **Siguiente** y aparece otro verbo.
 
-Cada campo es una fila: la etiqueta a la izquierda (`él / ella / usted / ustedes` entra en
-una columna angosta y se parte en varias líneas), el input en el medio y —solo cuando el
-campo está bloqueado— el icono de audio a la derecha. La devolución (`✓ ¡bien!`,
-`✗ Correcto: …`) ocupa todo el ancho de la fila, debajo del input.
+El verbo va en **una sola línea centrada**: `[infinitivo] [altavoz] [irregular]`. Cada campo
+es una fila: la etiqueta en blanco a la izquierda (`él / ella / usted` y
+`ellos / ellas / ustedes` entran en una columna angosta y se parten en dos o tres líneas), el
+input en el medio y —a la derecha— el **✓** de acierto y el icono de audio, que aparecen solo
+cuando el campo está bloqueado. La columna de la derecha tiene ancho reservado, así que los
+**cinco inputs quedan alineados exactamente igual** en todos los estados. La corrección
+(`✗ Correcto: …`) aparece en una línea propia, debajo del input, **solo en los campos
+equivocados**: aceptar con todo bien no cambia la altura de la pantalla. El resumen de la
+jugada (`¡Perfecto!…` / `Casi. Revisá: …`) se sigue generando y anunciando, pero vive en un
+contenedor recortado (solo para lectores de pantalla): no ocupa alto ni ancho.
 
 ### Verbos irregulares
 
-- Si el verbo es irregular, al lado del infinitivo aparece —**antes** de responder— un
-  **distintivo amarillo** con un icono de aviso y la palabra *irregular*.
-- Después de tocar **Aceptar**, debajo del infinitivo se agrega la explicación en español
-  (`irregular_note`): p. ej. *"Diptongación o→ue (puedo, puede, pueden)."*
-- Si el verbo es regular, no se muestra ni el distintivo ni la nota.
+- Si el verbo es irregular, a la derecha del altavoz aparece —**antes** de responder— un
+  **distintivo amarillo compacto** con un icono de aviso y la palabra *irregular*.
+- Si el verbo es regular, no se muestra el distintivo.
+- No se muestra ninguna explicación de la irregularidad: la regla vive solo en los datos
+  (`irregular_note`), que la app **no renderiza** en ningún lado.
 
 ### Validación
 
 - Ignora mayúsculas, espacios sobrantes y **acentos**: `esta` vale por `está`.
   Igual, la respuesta que se muestra siempre está **bien acentuada**.
-- El 4º campo acepta **las tres** formas del singular y la del plural: `él/ella`,
-  `usted` y `ustedes` (por ejemplo `habla` **y** `hablan`). `usted` usa la misma 3ª
-  del singular que `él/ella`, así que no hace falta ningún dato extra. Si te equivocás,
-  se muestra la de **ustedes**, que es la forma rioplatense que pedimos, con la
-  aclaración *(también: habla)*.
+- Cada campo tiene **una sola** respuesta correcta. La 3ª del singular y la 3ª del plural
+  son formas distintas y se piden por separado: `él / ella / usted` → **habla**;
+  `ellos / ellas / ustedes` → **hablan**. (`usted` comparte la forma de `él`/`ella` y
+  `ustedes` la de `ellos`/`ellas`: por eso cada campo cubre tres pronombres con una forma.)
+  Si te equivocás, debajo del campo rojo aparece la forma correcta completa.
 
 ### Selección de palabras
 
@@ -146,20 +153,30 @@ falla, cae automáticamente a TTS.
   blanco y Sol de Mayo de 16 rayos con cara— dentro de un escudo con borde degradé
   magenta→violeta→cian. Se mantiene reconocible a 130px.
 - **Accesibilidad**: campos con `label` asociado, foco visible, `aria-live` para el
-  resultado, botones de 44px+ de alto, contraste alto sobre fondo oscuro y respeto por
-  `prefers-reduced-motion`.
+  resultado (en un contenedor recortado, así no ocupa espacio), botones de 44px+ de alto,
+  contraste alto sobre fondo oscuro y respeto por `prefers-reduced-motion`.
 - **Código preparado para crecer**: el router de pantallas y el inicio no saben nada de
   verbos. Cada práctica es un módulo con `mount()/start()/teardown()` registrado en
   `MODULES` dentro de `js/app.js`; agregar otro (por ejemplo, preposiciones) es sumar un
   objeto, sin tocar el resto.
 - **Forma de los datos**: cada verbo está ordenado por `rank` y se guarda como
-  `{ rank, infinitive, meaning_en, meaning_ru, irregular, irregular_note, yo, vos, nosotros, el_ella, el_ella_ustedes }`.
-  La clave `el_ella_ustedes` es la **canónica** del 4º campo (la de *ustedes*), y `el_ella`
-  existe aparte para poder aceptar también la 3ª del singular (`él`, `ella`, `usted`) sin
-  dejar de mostrar la de ustedes cuando hay error. `irregular` (booleano) e
-  `irregular_note` (español) alimentan el distintivo y la explicación del verbo irregular.
+  `{ rank, infinitive, meaning_en, meaning_ru, irregular, irregular_note, yo, vos, nosotros, el_ella_usted, ellos_ellas_ustedes }`.
+  Las cinco claves de forma son la única forma de cada campo: `el_ella_usted` es la 3ª del
+  singular (él / ella / usted) y `ellos_ellas_ustedes` la 3ª del plural (ellos / ellas /
+  ustedes). No hay sinónimos ni respuestas alternativas por campo. `irregular` (booleano) es
+  lo único que alimenta el distintivo *irregular*; `irregular_note` (español) se conserva en
+  los datos pero **la interfaz ya no lo muestra**.
   `meaning_en` + `meaning_ru` son la **única** excepción al español en la interfaz: se
   muestran juntos, como `to speak · говорить`, debajo del infinitivo, y en ningún otro lado.
+- **Todo entra sin scroll en 660px de alto** con las **cinco** filas: la fila del infinitivo
+  (`[infinitivo] [altavoz] [irregular]`) es una sola línea centrada que no desborda ni a
+  320px de ancho con el infinitivo más largo; las etiquetas largas se parten en la columna
+  angosta, la columna de iconos de la derecha tiene ancho reservado (los cinco inputs miden
+  lo mismo en todos los estados), los campos correctos se marcan con un ✓ sin agregar
+  ninguna línea y solo los incorrectos agregan la corrección debajo. El resumen de la jugada
+  vive en un contenedor recortado (solo `aria-live`): no ocupa alto. Medido con Chromium
+  headless a 320×660 y 500×660 (con y sin las tipografías de Google): `scrollHeight` ≤ 660px
+  en todos los estados, con 30px de margen en el peor caso (5 formas mal + aviso de tilde).
 - **Solo voseo**: no se enseña la 2ª persona del singular del español general; todas las
   formas de 2ª persona del singular son de voseo rioplatense.
 - **Sin auto-foco en móvil**: en escritorio el primer campo recibe el foco para poder
@@ -180,7 +197,10 @@ Chequeo automático de la integridad del dataset:
 - Todos los campos obligatorios no vacíos (`meaning_en` y `meaning_ru` incluidos);
   `irregular_note` presente **solo** cuando `irregular === true`.
 - **43 irregulares / 57 regulares.**
-- El 4º campo distingue siempre `el_ella` (3ª sing.) de `el_ella_ustedes` (3ª pl.).
+- Las dos formas de 3ª persona están siempre presentes y son distintas:
+  `el_ella_usted` (3ª sing.) ≠ `ellos_ellas_ustedes` (3ª pl.). La regla derivada de la
+  conjugación se chequea además forma por forma (500 formas: `yo`, `vos`, `nosotros`,
+  `el_ella_usted`, `ellos_ellas_ustedes`).
 - Ninguna forma de 2ª persona del singular es una forma del español general; las 5 que
   coinciden de verdad (`ver`, `dar`, `ir`, `estar`, `haber`) están contempladas.
 
@@ -190,7 +210,8 @@ Si tocás los datos, podés repetir la parte básica con `node`:
 node -e "global.window=global; require('./js/verbs.js');
 const v = global.RPL_VERBS;
 console.log(v.length, new Set(v.map(x=>x.infinitive)).size,
-  v.every(x => x.infinitive && x.meaning_en && x.meaning_ru && x.yo && x.vos && x.nosotros && x.el_ella && x.el_ella_ustedes),
-  v.filter(x => x.irregular).length);
-// -> 100 100 true 43"
+  v.every(x => x.infinitive && x.meaning_en && x.meaning_ru && x.yo && x.vos && x.nosotros && x.el_ella_usted && x.ellos_ellas_ustedes),
+  v.filter(x => x.irregular).length,
+  v.filter(x => x.el_ella_usted === x.ellos_ellas_ustedes).length);
+// -> 100 100 true 43 0"
 ```

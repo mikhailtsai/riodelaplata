@@ -66,13 +66,15 @@
   /* ==========================================================================
    * Módulo: entrenador de verbos
    * ======================================================================== */
+  // Cinco formas verbales, cinco campos. Cada campo tiene UNA sola respuesta
+  // correcta: la 3ª del singular (él / ella / usted -> habla) y la 3ª del
+  // plural (ellos / ellas / ustedes -> hablan) son formas distintas.
   var FIELDS = [
-    { key: 'yo', label: 'yo', alts: [] },
-    { key: 'vos', label: 'vos', alts: [] },
-    { key: 'nosotros', label: 'nosotros', alts: [] },
-    // El 4º campo acepta él/ella/usted Y ustedes (la 3ª del singular sirve para
-    // los tres); se muestra siempre la forma de ustedes.
-    { key: 'el_ella_ustedes', label: 'él / ella / usted / ustedes', alts: ['el_ella'] }
+    { key: 'yo', label: 'yo' },
+    { key: 'vos', label: 'vos' },
+    { key: 'nosotros', label: 'nosotros' },
+    { key: 'el_ella_usted', label: 'él / ella / usted' },
+    { key: 'ellos_ellas_ustedes', label: 'ellos / ellas / ustedes' }
   ];
 
   var verbTrainer = (function () {
@@ -171,9 +173,12 @@
 
         // Visto compacto: reemplaza a la línea "✓ ¡bien!" para que aceptar un
         // campo correcto no agregue ninguna línea ni cambie la altura.
+        // role="img" + aria-label: el acierto se sigue anunciando aunque no
+        // haya texto visible en la fila.
         var checkIcon = document.createElement('span');
         checkIcon.className = 'field__check';
-        checkIcon.setAttribute('aria-hidden', 'true');
+        checkIcon.setAttribute('role', 'img');
+        checkIcon.setAttribute('aria-label', 'correcto');
         checkIcon.textContent = '\u2713';
 
         var rightCol = document.createElement('span');
@@ -224,7 +229,7 @@
       });
     }
 
-    function setStatus(field, kind, canonical, alternatives, accentOnly) {
+    function setStatus(field, kind, canonical, accentOnly) {
       var status = fieldEls[field.key].querySelector('.field__status');
       status.innerHTML = '';
 
@@ -253,17 +258,6 @@
       answer.className = 'field__answer';
       answer.textContent = canonical;
       status.appendChild(answer);
-
-      // El 4º campo acepta también él/ella: se aclara sin desorientar.
-      var others = (alternatives || []).filter(function (alt) {
-        return alt && normalize(alt) !== normalize(canonical);
-      });
-      if (others.length) {
-        var extra = document.createElement('span');
-        extra.className = 'field__extra';
-        extra.textContent = '(también: ' + others.join(' / ') + ')';
-        status.appendChild(extra);
-      }
     }
 
     function clearStatus(field) {
@@ -332,23 +326,16 @@
     function evaluate(field) {
       var input = inputs[field.key];
       var canonical = verb[field.key];
-      var rawValues = [canonical].concat(
-        field.alts.map(function (altKey) { return verb[altKey]; })
-      ).filter(Boolean);
-      var acceptedValues = rawValues.map(normalize);
       // Escritura exacta (con tildes): distingue voseo de tuteo.
-      var exactValues = rawValues.map(normalizeExact);
-
       var typed = normalize(input.value);
       var typedExact = normalizeExact(input.value);
-      var correct = typed !== '' && acceptedValues.indexOf(typed) !== -1;
+      var correct = typed !== '' && typed === normalize(canonical);
       return {
         field: field,
         canonical: canonical,
-        alternatives: field.alts.map(function (altKey) { return verb[altKey]; }).filter(Boolean),
         correct: correct,
         // Correcto solo tras quitar tildes: falta la escritura exacta.
-        accentOnly: correct && typedExact !== '' && exactValues.indexOf(typedExact) === -1
+        accentOnly: correct && typedExact !== normalizeExact(canonical)
       };
     }
 
@@ -366,13 +353,17 @@
         wrap.classList.add('is-locked');
         if (result.correct) {
           wrap.classList.add('is-correct');
-          setStatus(result.field, 'correct', result.canonical, [], result.accentOnly);
+          setStatus(result.field, 'correct', result.canonical, result.accentOnly);
         } else {
           wrap.classList.add('is-wrong');
-          setStatus(result.field, 'wrong', result.canonical, result.alternatives);
+          setStatus(result.field, 'wrong', result.canonical);
         }
       });
 
+      // El resultado se anuncia por `aria-live`, pero el texto vive en un
+      // contenedor recortado (sr-only): la devolución visual son los colores
+      // de cada campo y la corrección debajo del campo equivocado. Así la
+      // línea de resumen no ocupa alto y las cinco filas entran sin scroll.
       if (wrong.length) {
         els.feedback.className = 'feedback is-bad';
         var names = wrong.map(function (result) { return result.field.label; }).join(', ');
@@ -384,7 +375,7 @@
         streak = 0;
       } else {
         els.feedback.className = 'feedback is-good';
-        els.feedback.textContent = '\u00a1Perfecto! Las cuatro formas están bien.';
+        els.feedback.textContent = '\u00a1Perfecto! Las cinco formas est\u00e1n bien.';
         streak += 1;
         if (streak > best) best = streak;
       }
