@@ -39,19 +39,27 @@
 /* ------------------------------------------------------------------ base -- */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+/* La PÁGINA nunca se desplaza. Al abrir el teclado en el móvil el navegador
+   hace scroll para mostrar el campo enfocado, y el fondo "saltaba" hacia
+   arriba. El scroll vive dentro de .app, así que el fondo queda fijo. */
+html {
+  -webkit-text-size-adjust: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
 
 body {
   margin: 0;
-  min-height: 100vh;
-  min-height: 100svh;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
   background: var(--bg-0);
   color: var(--text);
   font-family: var(--font-body);
   font-size: 17px;
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
 }
 
 h1, h2, p { margin: 0; }
@@ -66,8 +74,14 @@ button { font: inherit; color: inherit; }
 
 /* --------------------------------------------------------------- backdrop -- */
 .bg {
+  /* Anclado ARRIBA y con la altura congelada (--bg-h la fija el JS): así el
+     teclado del móvil no lo mueve ni lo encoge. Fallback sin JS: 100lvh. */
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  height: var(--bg-h, 100lvh);
   z-index: -1;
   overflow: hidden;
   background: var(--bg-0);
@@ -168,8 +182,12 @@ button { font: inherit; color: inherit; }
   width: 100%;
   max-width: var(--maxw);
   margin-inline: auto;
-  min-height: 100vh;
-  min-height: 100svh;
+  height: 100%;
+  /* Único contenedor con scroll: al abrir el teclado sólo se desplaza esto,
+     nunca la página (el fondo queda estático arriba). */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding: max(18px, env(safe-area-inset-top)) 18px calc(20px + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;

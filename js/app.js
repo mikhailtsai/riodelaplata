@@ -513,6 +513,35 @@
     showScreen('home');
   }
 
+  /* ------------------------------------------------- fondo estable (móvil) --
+   * Al abrir el teclado el viewport se encoge y el navegador desplaza la
+   * página para mostrar el campo enfocado: un fondo "fixed" se veía saltar
+   * hacia arriba. Congelamos la altura del fondo (--bg-h): sólo crece, o se
+   * recalcula al girar el teléfono / cambiar el ancho. El fondo queda
+   * siempre anclado arriba y no se mueve mientras se escribe. */
+  (function freezeBackdrop() {
+    var root = document.documentElement;
+    var frozen = 0;
+    var lastWidth = 0;
+
+    function sync() {
+      var vv = global.visualViewport;
+      var h = Math.max(global.innerHeight || 0, (vv && vv.height) || 0);
+      var w = global.innerWidth || 0;
+      if (!h) return;
+      if (w !== lastWidth || h > frozen) {
+        frozen = h;
+        lastWidth = w;
+        root.style.setProperty('--bg-h', h + 'px');
+      }
+    }
+
+    sync();
+    global.addEventListener('resize', sync);
+    global.addEventListener('orientationchange', sync);
+    if (global.visualViewport) global.visualViewport.addEventListener('resize', sync);
+  })();
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
