@@ -156,7 +156,7 @@
     /* -------------------------------------------------------------- DOM -- */
     function buildFields() {
       els.fields.innerHTML = '';
-      FIELDS.forEach(function (field) {
+      FIELDS.forEach(function (field, index) {
         var wrap = document.createElement('div');
         wrap.className = 'field';
         wrap.setAttribute('data-key', field.key);
@@ -195,7 +195,7 @@
         input.autocapitalize = 'none';
         input.spellcheck = false;
         input.placeholder = '...';
-        input.setAttribute('enterkeyhint', 'done');
+        input.setAttribute('enterkeyhint', index === FIELDS.length - 1 ? 'send' : 'next');
         input.setAttribute('aria-describedby', 'status-' + field.key);
         input.dataset.key = field.key;
 
@@ -212,11 +212,21 @@
         inputs[field.key] = input;
         fieldEls[field.key] = wrap;
 
+        // Teclado del móvil: "siguiente" salta al campo siguiente y sólo el
+        // último campo envía. (El texto del botón lo fija enterkeyhint.)
         input.addEventListener('keydown', function (event) {
           if (event.key !== 'Enter') return;
           event.preventDefault();
-          if (!accepted) accept();
-          else if (!els.actionBtn.disabled) next();
+          if (accepted) {
+            if (!els.actionBtn.disabled) next();
+            return;
+          }
+          if (index < FIELDS.length - 1) {
+            var nextInput = inputs[FIELDS[index + 1].key];
+            if (nextInput) nextInput.focus();
+          } else {
+            accept();
+          }
         });
 
         // Ya aceptado: tocar el campo vuelve a pronunciar la forma correcta.
@@ -317,8 +327,9 @@
 
       remember(verb.infinitive);
 
-      // En escritorio el foco ayuda; en móvil evita abrir el teclado solo.
-      if (!('ontouchstart' in global) && inputs.yo) {
+      // Al abrir el juego o al pasar de palabra, el primer campo (yo) queda
+      // enfocado y el teclado se abre listo para escribir.
+      if (inputs.yo) {
         try { inputs.yo.focus({ preventScroll: true }); } catch (e) { inputs.yo.focus(); }
       }
     }
@@ -342,6 +353,12 @@
     function accept() {
       if (!verb || accepted) return;
       accepted = true;
+
+      // Se cierra el teclado: los campos quedan bloqueados y hay que ver el
+      // resultado (las correcciones quedarían tapadas por el teclado).
+      if (document.activeElement && typeof document.activeElement.blur === 'function') {
+        document.activeElement.blur();
+      }
 
       var results = FIELDS.map(evaluate);
       var wrong = results.filter(function (r) { return !r.correct; });
