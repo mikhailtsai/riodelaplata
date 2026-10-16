@@ -661,7 +661,44 @@
     initHistory();
     progress.load();
     progress.paint();
+    initPwa();
     showScreen('home');
+  }
+
+  /* ------------------------------------------------------------------ PWA --
+   * Service worker (funciona sin conexión + instalable) y botón de instalación.
+   * En file:// no existen los service workers: se omite y la app funciona igual. */
+  var installPrompt = null;
+
+  function initPwa() {
+    if ('serviceWorker' in navigator && /^https?:$/.test(global.location.protocol)) {
+      global.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js').catch(function () { /* sin SW: la app sigue igual */ });
+      });
+    }
+
+    var btn = $('install-btn');
+    if (!btn) return;
+
+    global.addEventListener('beforeinstallprompt', function (event) {
+      event.preventDefault();
+      installPrompt = event;
+      btn.hidden = false;
+    });
+
+    function dismiss() { installPrompt = null; btn.hidden = true; }
+
+    btn.addEventListener('click', function () {
+      if (!installPrompt) return;
+      installPrompt.prompt();
+      if (installPrompt.userChoice && installPrompt.userChoice.then) {
+        installPrompt.userChoice.then(dismiss, dismiss);
+      } else {
+        dismiss();
+      }
+    });
+
+    global.addEventListener('appinstalled', dismiss);
   }
 
   /* ------------------------------------------------- fondo estable (móvil) --

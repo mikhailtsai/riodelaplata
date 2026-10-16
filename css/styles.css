@@ -348,6 +348,16 @@ button { font: inherit; color: inherit; }
 .btn__arrow { display: inline-flex; transform: translateY(0.5px); }
 .btn--hero:active .btn__arrow { transform: translate(2px, 0.5px); }
 
+/* Botón secundario de instalación (PWA). Aparece solo si el navegador ofrece
+   instalar la app; si no, queda oculto y no ocupa alto. */
+.btn--install {
+  min-height: 46px;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--line);
+  font-size: 0.9rem;
+}
+.btn--install[hidden] { display: none; }
+
 /* contador dentro del botón "Siguiente" */
 .btn__count { display: none; position: relative; width: 26px; height: 26px; flex: 0 0 auto; }
 .btn.is-counting .btn__count { display: inline-flex; align-items: center; justify-content: center; }

@@ -42,12 +42,15 @@ funcionen sin restricciones del navegador.
 ## Estructura
 
 ```
-index.html            estructura de las dos pantallas + logo SVG inline
+index.html            estructura de las pantallas + logo SVG inline
+manifest.webmanifest  PWA: nombre, colores, iconos, modo standalone
+sw.js                 service worker (sin conexión)
 css/styles.css        estilos retrowave (fondo, tipografía, animaciones)
 js/verbs.js           los 100 verbos (única fuente de verdad)
 js/audio-map.js       overrides opcionales de audio (mp3)
 js/audio.js           pronunciación: mp3 -> Web Speech API -> nada
-js/app.js             router de pantallas + juego de verbos
+js/app.js             router de pantallas + juego de verbos + progreso + PWA
+icons/                iconos de la PWA (192/512 + maskable + apple-touch)
 assets/audio/         acá van los mp3 (vacío por defecto)
 ```
 
@@ -152,6 +155,23 @@ Lo que no esté en el mapa se sigue diciendo con la voz del sistema. Si un mp3 f
 falla, cae automáticamente a TTS.
 
 > El nombre tiene que coincidir **exacto**: `vivís` con tilde es distinto de `vivis`.
+
+---
+
+## PWA (instalable y sin conexión)
+
+- **Instalable:** `manifest.webmanifest` (modo `standalone`, orientación vertical, colores
+  de la app) + iconos 192/512, **maskable** (para Android) y `apple-touch-icon` (para iOS).
+  El navegador ofrece "Agregar a la pantalla de inicio"; en el inicio aparece un botón
+  **Instalar la app** solo cuando el navegador ofrece la instalación.
+- **Sin conexión:** `sw.js` guarda la app en caché. Estrategia **network-first**: con conexión
+  siempre se sirve lo último (una publicación nueva se ve enseguida) y sin conexión se
+  responde desde la caché.
+- **Al publicar cambios, subí `CACHE_VERSION`** en `sw.js` (`rioplatense-v1` → `v2`) para
+  descartar la caché vieja.
+- El service worker solo se registra bajo `http/https`; abriendo el archivo con `file://`
+  no existe y la app funciona igual.
+- Los iconos se generan desde un SVG con Chromium headless (ver `icons/`).
 
 ---
 
