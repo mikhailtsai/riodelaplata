@@ -169,11 +169,12 @@
   // Cinco formas verbales, cinco campos. Cada campo tiene UNA sola respuesta
   // correcta: la 3ª del singular (él / ella / usted -> habla) y la 3ª del
   // plural (ellos / ellas / ustedes -> hablan) son formas distintas.
+  // Orden pedido: yo, vos, él/ella/usted, nosotros, ellos/ellas/ustedes.
   var FIELDS = [
     { key: 'yo', label: 'yo' },
     { key: 'vos', label: 'vos' },
-    { key: 'nosotros', label: 'nosotros' },
     { key: 'el_ella_usted', label: 'él / ella / usted' },
+    { key: 'nosotros', label: 'nosotros' },
     { key: 'ellos_ellas_ustedes', label: 'ellos / ellas / ustedes' }
   ];
 

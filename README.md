@@ -10,7 +10,7 @@ Hoy tiene **dos pantallas**:
 1. **Inicio** — logo (escudo con la bandera de Uruguay), título, subtítulo y el botón
    *"Aprendé los 100 verbos más útiles"*.
 2. **Entrenador de verbos** — muestra un infinitivo con su traducción (inglés · ruso)
-   y cinco campos (`yo`, `vos`, `nosotros`, `él / ella / usted`, `ellos / ellas / ustedes`)
+   y cinco campos (`yo`, `vos`, `él / ella / usted`, `nosotros`, `ellos / ellas / ustedes`)
    para escribir el presente del indicativo.
 
 ---
